@@ -269,7 +269,7 @@ function kmake-wrapper(){
 		OBJCOPY="llvm-objcopy" \
 		OBJDUMP="llvm-objdump" \
 		KBUILD_COMPILER_STRING="$(get_clang_version "${CLANG_BIN}"/clang)" \
-		2>&1 | tee ../kernel_log.txt
+		2>&1 | tee ../../kernel_log.txt
 
 	cd "${AROOT}" || exit
 }
