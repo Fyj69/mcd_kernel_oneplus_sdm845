@@ -47,7 +47,7 @@ bool events_check_enabled __read_mostly;
 unsigned int pm_wakeup_irq __read_mostly;
 
 /* If set and the system is suspending, terminate the suspend. */
-static bool pm_abort_suspend __read_mostly;
+static atomic_t pm_abort_suspend __read_mostly;
 
 /*
  * Combined counters of registered wakeup events and wakeup events in progress.
@@ -999,20 +999,21 @@ bool pm_wakeup_pending(void)
 		pm_print_active_wakeup_sources();
 	}
 
-	return ret || pm_abort_suspend;
+	return ret || atomic_read(&pm_abort_suspend) > 0;
 }
 
 void pm_system_wakeup(void)
 {
-	pm_abort_suspend = true;
+	if (atomic_inc_return_relaxed(&pm_abort_suspend) == 1)
 	freeze_wake();
 }
 EXPORT_SYMBOL_GPL(pm_system_wakeup);
 
-void pm_wakeup_clear(void)
+void pm_wakeup_clear(bool reset)
 {
-	pm_abort_suspend = false;
 	pm_wakeup_irq = 0;
+	if (reset) 
+   atomic_set(&pm_abort_suspend, 0); 
 }
 
 static void init_resume_wakeup_flag(void)
