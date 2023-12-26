@@ -352,6 +352,15 @@ config IP_NF_TARGET_ECN
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
+config IP_NF_TARGET_FULLCONENAT
+        tristate "FULLCONENAT target support"
+        depends on NETFILTER_ADVANCED
+        select NETFILTER_XT_TARGET_FULLCONENAT
+        help
+        This is a backwards-compat option for the user's convenience
+        (e.g. when running oldconfig). It selects
+        CONFIG_NETFILTER_XT_TARGET_FULLCONENAT.
+
 config IP_NF_TARGET_TTL
 	tristate '"TTL" target support'
 	depends on NETFILTER_ADVANCED && IP_NF_MANGLE
