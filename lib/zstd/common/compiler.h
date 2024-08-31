@@ -172,7 +172,18 @@
  * - CPP17: https://en.cppreference.com/w/cpp/language/attributes/fallthrough
  * - Else: __attribute__((__fallthrough__))
  */
-#define ZSTD_FALLTHROUGH /* fall through */
+ 
+#if defined(__clang__) && __has_feature(cxx_attributes)
+    #define ZSTD_FALLTHROUGH [[clang::fallthrough]]
+#elif defined(__GNUC__) && __GNUC__ >= 7
+    #define ZSTD_FALLTHROUGH __attribute__((fallthrough))
+#elif defined(__cplusplus) && __cplusplus >= 201703L
+    #define ZSTD_FALLTHROUGH [[fallthrough]]
+#elif ZSTD_HAS_C_ATTRIBUTE(fallthrough)
+    #define ZSTD_FALLTHROUGH [[fallthrough]]
+#else
+    #define ZSTD_FALLTHROUGH /* fallthrough */
+#endif
 
 /*-**************************************************************
 *  Alignment check
@@ -215,7 +226,7 @@
 #endif
 
 /*
- * Helper function to perform a wrapped pointer difference without trigging
+ * Helper function to perform a wrapped pointer difference without triggering
  * UBSAN.
  *
  * @returns lhs - rhs with wrapping

@@ -256,22 +256,22 @@ MEM_STATIC size_t BIT_initDStream(BIT_DStream_t* bitD, const void* srcBuffer, si
         switch(srcSize)
         {
         case 7: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[6]) << (sizeof(bitD->bitContainer)*8 - 16);
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         case 6: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[5]) << (sizeof(bitD->bitContainer)*8 - 24);
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         case 5: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[4]) << (sizeof(bitD->bitContainer)*8 - 32);
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         case 4: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[3]) << 24;
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         case 3: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[2]) << 16;
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         case 2: bitD->bitContainer += (BitContainerType)(((const BYTE*)(srcBuffer))[1]) <<  8;
-                do {} while (0);;
+                ZSTD_FALLTHROUGH;
 
         default: break;
         }
