@@ -146,7 +146,6 @@ int main(int argc, char **argv)
 		ENGINE_finish(e);
 		ENGINE_free(e);
 #else
-		// OpenSSL 3.0 及更新版本的替代代码
 		fprintf(stderr, "PKCS#11 ENGINE is not supported in OpenSSL 3.0 and later.\n");
 		exit(1);
 #endif
