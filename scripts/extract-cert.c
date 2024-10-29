@@ -43,11 +43,7 @@ static void display_openssl_errors(int l)
         return;
     fprintf(stderr, "At main.c:%d:\n", l);
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
     while ((e = ERR_get_error_line(&file, &line))) {
-#else
-    while ((e = ERR_get_error_all(&file, &line, NULL, NULL))) {
-#endif
         ERR_error_string(e, buf);
         fprintf(stderr, "- SSL %s: %s:%d\n", buf, file, line);
     }
@@ -60,11 +56,8 @@ static void drain_openssl_errors(void)
 
     if (ERR_peek_error() == 0)
         return;
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+
     while (ERR_get_error_line(&file, &line)) {}
-#else
-    while (ERR_get_error_all(&file, &line, NULL, NULL)) {}
-#endif
 }
 
 #define ERR(cond, fmt, ...)              \
