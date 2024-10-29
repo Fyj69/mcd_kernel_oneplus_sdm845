@@ -53,21 +53,6 @@ static void display_openssl_errors(int l)
     }
 }
 
-static void drain_openssl_errors(void)
-{
-    const char *file;
-    int line;
-
-    if (ERR_peek_error() == 0)
-        return;
-
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
-    while (ERR_get_error_line(&file, &line)) {}
-#else
-    while (ERR_get_error_all(&file, &line, NULL, NULL, NULL)) {}
-#endif
-}
-
 #define ERR(cond, fmt, ...)              \
     do {                                \
         bool __cond = (cond);            \
@@ -131,12 +116,9 @@ int main(int argc, char **argv)
         parms.cert = NULL;
 
         ENGINE_load_builtin_engines();
-        drain_openssl_errors();
         e = ENGINE_by_id("pkcs11");
         ERR(!e, "Load PKCS#11 ENGINE");
         if (ENGINE_init(e))
-            drain_openssl_errors();
-        else
             ERR(1, "ENGINE_init");
         if (key_pass)
             ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
