@@ -5650,4 +5650,4 @@ CONFIG_QMI_ENCDEC=y
 # CONFIG_QMI_ENCDEC_DEBUG is not set
 
 # KernelSU
-# CONFIG_KSU is not set
+CONFIG_KSU=y
