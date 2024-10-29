@@ -43,7 +43,11 @@ static void display_openssl_errors(int l)
 		return;
 	fprintf(stderr, "At main.c:%d:\n", l);
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 	while ((e = ERR_get_error_line(&file, &line))) {
+#else
+	while ((e = ERR_get_error_all(&file, &line, NULL, NULL))) {
+#endif
 		ERR_error_string(e, buf);
 		fprintf(stderr, "- SSL %s: %s:%d\n", buf, file, line);
 	}
@@ -56,7 +60,11 @@ static void drain_openssl_errors(void)
 
 	if (ERR_peek_error() == 0)
 		return;
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 	while (ERR_get_error_line(&file, &line)) {}
+#else
+	while (ERR_get_error_all(&file, &line, NULL, NULL)) {}
+#endif
 }
 
 #define ERR(cond, fmt, ...)				\
@@ -112,6 +120,7 @@ int main(int argc, char **argv)
 		fclose(f);
 		exit(0);
 	} else if (!strncmp(cert_src, "pkcs11:", 7)) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 		ENGINE *e;
 		struct {
 			const char *cert_id;
@@ -134,6 +143,12 @@ int main(int argc, char **argv)
 		ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
 		ERR(!parms.cert, "Get X.509 from PKCS#11");
 		write_cert(parms.cert);
+		ENGINE_finish(e);
+		ENGINE_free(e);
+#else
+		fprintf(stderr, "PKCS#11 ENGINE is not supported in OpenSSL 3.0 and later.\n");
+		exit(1);
+#endif
 	} else {
 		BIO *b;
 		X509 *x509;
