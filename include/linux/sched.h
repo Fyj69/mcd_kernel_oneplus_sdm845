@@ -2258,6 +2258,8 @@ struct task_struct {
 	struct fuse_package *fpack;
 #endif /* CONFIG_OPLUS_FEATURE_FUSE_FS_SHORTCIRCUIT */
 
+u64 android_kabi_reserved8;
+
 /* CPU-specific state of this task */
 	struct thread_struct thread;
 /*
