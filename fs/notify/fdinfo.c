@@ -20,8 +20,8 @@
 
 #if defined(CONFIG_INOTIFY_USER) || defined(CONFIG_FANOTIFY)
 
-static void show_fdinfo(struct seq_file *m, struct file *f,
-			void (*show)(struct seq_file *m, struct fsnotify_mark *mark, struct file *f))
+static void show_fdinfo(struct seq_file *m, struct file *file,
+			void (*show)(struct seq_file *m, struct fsnotify_mark *mark, struct file *file))
 {
 	struct fsnotify_group *group = f->private_data;
 	struct fsnotify_mark *mark;
@@ -70,7 +70,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
 
 #ifdef CONFIG_INOTIFY_USER
 
-static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *f)
+static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *file)
 {
 	struct inotify_inode_mark *inode_mark;
 	struct inode *inode;
@@ -98,7 +98,7 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struc
 	}
 }
 
-void inotify_show_fdinfo(struct seq_file *m, struct file *f)
+void inotify_show_fdinfo(struct seq_file *m, struct file *file)
 {
 	show_fdinfo(m, f, inotify_fdinfo);
 }
@@ -107,7 +107,7 @@ void inotify_show_fdinfo(struct seq_file *m, struct file *f)
 
 #ifdef CONFIG_FANOTIFY
 
-static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *f)
+static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *file)
 {
 	unsigned int mflags = 0;
 	struct inode *inode;
@@ -136,7 +136,7 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, stru
 	}
 }
 
-void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
+void fanotify_show_fdinfo(struct seq_file *m, struct file *file)
 {
 	struct fsnotify_group *group = f->private_data;
 	unsigned int flags = 0;
