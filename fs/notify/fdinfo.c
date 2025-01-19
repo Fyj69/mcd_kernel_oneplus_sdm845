@@ -20,15 +20,16 @@
 
 #if defined(CONFIG_INOTIFY_USER) || defined(CONFIG_FANOTIFY)
 
-static void show_fdinfo(struct seq_file *m, struct file *file,
-			void (*show)(struct seq_file *m, struct fsnotify_mark *mark, struct file *file))
+static void show_fdinfo(struct seq_file *m, struct file *f,
+			void (*show)(struct seq_file *m,
+				     struct fsnotify_mark *mark))
 {
 	struct fsnotify_group *group = f->private_data;
 	struct fsnotify_mark *mark;
 
 	mutex_lock(&group->mark_mutex);
 	list_for_each_entry(mark, &group->marks_list, g_list) {
-		show(m, mark, f);
+		show(m, mark);
 		if (seq_has_overflowed(m))
 			break;
 	}
@@ -70,7 +71,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
 
 #ifdef CONFIG_INOTIFY_USER
 
-static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *file)
+static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 {
 	struct inotify_inode_mark *inode_mark;
 	struct inode *inode;
@@ -98,7 +99,7 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struc
 	}
 }
 
-void inotify_show_fdinfo(struct seq_file *m, struct file *file)
+void inotify_show_fdinfo(struct seq_file *m, struct file *f)
 {
 	show_fdinfo(m, f, inotify_fdinfo);
 }
@@ -107,7 +108,7 @@ void inotify_show_fdinfo(struct seq_file *m, struct file *file)
 
 #ifdef CONFIG_FANOTIFY
 
-static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, struct file *file)
+static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 {
 	unsigned int mflags = 0;
 	struct inode *inode;
@@ -136,7 +137,7 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark, stru
 	}
 }
 
-void fanotify_show_fdinfo(struct seq_file *m, struct file *file)
+void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
 {
 	struct fsnotify_group *group = f->private_data;
 	unsigned int flags = 0;
